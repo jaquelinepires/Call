@@ -4,6 +4,8 @@ import { ArrowRight } from 'phosphor-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 
 const registerFormSchema = z.object({
   username: z
@@ -24,10 +26,19 @@ export default function Register() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerFormSchema),
   })
+
+  const router = useRouter()
+
+  useEffect(() => {
+    if (router.query.username) {
+      setValue('username', String(router.query.username))
+    }
+  }, [router.query?.username, setValue])
 
   async function handleRegister(data: RegisterFormData) {
     console.log(data)
@@ -36,14 +47,13 @@ export default function Register() {
   return (
     <Container>
       <Header>
-        <Heading as="h1" size="4xl">
-          Bem-vindo ao Call!
-        </Heading>
+        <Heading as="strong">Bem-vindo ao Ignite Call!</Heading>
         <Text>
           Precisamos de algumas informações para criar seu perfil! Ah, você pode
           editar essas informações depois.
         </Text>
-        <MultiStep size={4} currentStep={1}></MultiStep>
+
+        <MultiStep size={4} currentStep={1} />
       </Header>
       <Form as="form" onSubmit={handleSubmit(handleRegister)}>
         <label>
